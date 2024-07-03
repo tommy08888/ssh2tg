@@ -1,18 +1,22 @@
 #!/bin/bash
 # 检查是否安装jq模块，若未安装则自动安装
-if ! command -v jq &> /dev/null; then
-    echo "jq is not installed. Installing jq..."
-    if command -v apt-get &> /dev/null; then
-        sudo apt-get update
-        sudo apt-get install -y jq
-    elif command -v yum &> /dev/null; then
-        sudo yum install -y epel-release
-        sudo yum install -y jq
-    else
-        echo "Error: Unable to install jq. Please install jq manually."
-        exit 1
-    fi
-fi
+# (这一部分可以完全删除，因为不需要安装 jq 了)
+# if ! command -v jq &> /dev/null; then
+#     echo "jq is not installed. Installing jq..."
+#     if command -v apt-get &> /dev/null; then
+#         sudo apt-get update
+#         sudo apt-get install -y jq
+#     elif command -v yum &> /dev/null; then
+#         sudo yum install -y epel-release
+#         sudo yum install -y jq
+#     else
+#         echo "Error: Unable to install jq. Please install jq manually."
+#         exit 1
+#     fi
+# fi
+#我不需要登录后提示所以不装jq
+
+
 # 登录计数文件路径
 count_file="/var/log/ssh_login_count.log"
 
@@ -58,5 +62,7 @@ MESSAGE="登录信息：
 登录地区：$LOCATION"
 
 curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendMessage" -d "chat_id=$CHAT_ID&text=$MESSAGE" >> /root/nohupssh2tg.out 2>&1 & disown
-echo "您此台机器最后5次的登录记录如下！"
-cat nohupssh2tg.out |jq '.result.text'|tail -5|sort -r|tr -d 'n''"'|sed 's/\\//g'|nl -w 2 -s '、'
+
+#echo "您此台机器最后5次的登录记录如下！"
+#cat nohupssh2tg.out |jq '.result.text'|tail -5|sort -r|tr -d 'n''"'|sed 's/\\//g'|nl -w 2 -s '、'
+#注释了登录的提示
